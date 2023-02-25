@@ -1,21 +1,22 @@
-import { model } from 'mongoose';
+const Book = require('../models/Book')
 
-const Book = model('Book');
+module.exports = {
+  async books (_req, res) {
+    try {
+      const book = await Book.find()
+      return res.json(book)
+    } catch (err) {
+      throw new Error(err.message)
+    }
+  },
 
-export async function search(req, res) {
-  try {
-    const book = await Book.find();
-    return res.json(book.title);
-  } catch (err) {
-    throw new Error(err.message);
-  }
-}
-
-export async function searchById(req, res) {
-  try {
-    const book = await Book.findById(req.params.id);
-    return res.json(book.title);
-  } catch (err) {
-    throw new Error(err.message);
+  async search (req, res) {
+    try {
+      const filter = req.query
+      const book = await Book.find(filter)
+      return res.json(book)
+    } catch (err) {
+      throw new Error(err.message)
+    }
   }
 }

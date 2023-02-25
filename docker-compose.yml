@@ -4,10 +4,11 @@ services:
   mongo:
     image: mongo
     container_name: 'softbook-db'
-    environment:
-      - MONGO_DATA_DIR=/data/db
-      - MONGO_LOG_DIR=/dev/null
     restart: always
+    environment:
+      - MONGO_INITDB_DATABASE=softbook-db
+      - MONGO_INITDB_ROOT_USERNAME=
+      - MONGO_INITDB_ROOT_PASSWORD=
     volumes:
       - mongo_data:/data/db
     ports:
@@ -16,3 +17,17 @@ services:
 volumes:
   mongo_data:
     external: false
+
+    services:
+  mongo:
+    image: mongo
+    container_name: 'softbook-db-test'
+    restart: always
+    environment:
+      - MONGO_INITDB_DATABASE=softbook-db-test
+      - MONGO_INITDB_ROOT_USERNAME=
+      - MONGO_INITDB_ROOT_PASSWORD=
+    volumes:
+      - mongo_data:/data/db
+    ports:
+      - "27017:27017"
