@@ -1,6 +1,6 @@
 const User = require('../models/User')
 
-const EXPIRE_TOKEN = 30000
+const EXPIRE_TOKEN = 30
 const jwt = require('jsonwebtoken')
 
 module.exports = {

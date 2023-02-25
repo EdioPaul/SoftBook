@@ -1,8 +1,9 @@
-# softbook
+# SoftBook
 
 This repository contains a project for Express server applications written in ES5/ES6.
 
 ## Features
+
   1. Verification of private routes with token
   2. Use DataBase MongoDB
   3. Use Docker-compose 
@@ -33,10 +34,4 @@ npm run dev
 
 ```bash
 npm test
-```
-
-## Lint
-
-```bash
-npm run lint
 ```

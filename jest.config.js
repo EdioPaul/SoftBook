@@ -4,5 +4,5 @@ module.exports = {
   coverageProvider: 'v8',
   roots: ['<rootDir>'],
   testEnvironment: 'jest-environment-node',
-  testMatch: ['**/**/*.spec.js']
+  testMatch: ['**/__tests__/**/*.spec.js?(x)']
 }
