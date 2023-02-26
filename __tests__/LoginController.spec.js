@@ -1,51 +1,50 @@
-const request = require('supertest')
-const server = require('../src/server')
+const jwt = require('jsonwebtoken')
+const UserController = require('../controllers/LoginController')
 const User = require('../src/models/User')
 
-describe('Login Controller', () => {
-  describe('POST /login', () => {
-    it('should return a JWT token for a valid user', async () => {
-      const user = new User({
-        name: 'Test user',
-        email: 'teste@example.com',
-        password: '123456'
-      })
-      await user.save()
+jest.mock('../src/models/User')
+jest.mock('jsonwebtoken')
 
-      const res = await request(server)
-        .post('/login')
-        .send({
-          email: 'teste@example.com',
-          password: '123456'
-        })
+describe('UserController', () => {
+  describe('login', () => {
+    it('should return a token if the login is valid', async () => {
+      const mockedUser = {
+        id: 'user-id',
+        password: 'password',
+        name: 'User Name'
+      }
+      User.find.mockImplementationOnce(() => Promise.resolve(mockedUser))
+      jwt.sign.mockImplementationOnce(() => 'jwt-token')
 
-      expect(res.status).toBe(200)
-      expect(res.body.auth).toBe(true)
-      expect(res.body.token).toBeDefined()
+      const req = { body: { id: mockedUser.id, password: mockedUser.password } }
+      const res = { json: jest.fn() }
 
-      await user.remove()
+      await UserController.login(req, res)
+
+      expect(User.find).toHaveBeenCalledWith({ id: mockedUser.id, password: mockedUser.password })
+      expect(jwt.sign).toHaveBeenCalledWith({ id: mockedUser.id }, process.env.SECRET, { expiresIn: 3000 })
+      expect(res.json).toHaveBeenCalledWith({ auth: true, token: 'jwt-token' })
     })
 
-    it('should return an error message for an invalid user', async () => {
-      const res = await request(server)
-        .post('/login')
-        .send({
-          email: 'test2@example.com',
-          password: '123456'
-        })
+    it('should return an error if the login is invalid', async () => {
+      User.find.mockImplementationOnce(() => Promise.resolve(null))
 
-      expect(res.status).toBe(500)
-      expect(res.body.message).toBe('Invalid login!')
+      const req = { body: { id: 'invalid-user-id', password: 'invalid-password' } }
+      const res = { status: jest.fn(() => res), json: jest.fn() }
+
+      await UserController.login(req, res)
+
+      expect(User.find).toHaveBeenCalledWith({ id: 'invalid-user-id', password: 'invalid-password' })
+      expect(res.status).toHaveBeenCalledWith(500)
+      expect(res.json).toHaveBeenCalledWith({ message: 'Invalid login!' })
     })
   })
 
-  describe('GET /logout', () => {
-    it('should return an object with auth set to false and token set to null', async () => {
-      const res = await request(server).get('/logout')
-
-      expect(res.status).toBe(200)
-      expect(res.body.auth).toBe(false)
-      expect(res.body.token).toBeNull()
+  describe('logout', () => {
+    it('should return an empty token', () => {
+      const res = { json: jest.fn() }
+      UserController.logout(res)
+      expect(res.json).toHaveBeenCalledWith({ auth: false, token: null })
     })
   })
 })

@@ -1,60 +1,60 @@
-const request = require('supertest')
-const server = require('../src/server')
+const { search } = require('../src/controllers/BookController')
 const Book = require('../src/models/Book')
 
-describe('Search Controller', () => {
-  describe('GET /books/search', () => {
-    it('should return a list of books matching the search criteria', async () => {
-      const book1 = new Book({
-        title: 'Test title',
-        author: 'Test author',
-        is_rent: false
-      })
-      const book2 = new Book({
-        title: 'Test title 2',
-        author: 'Test author 2',
-        is_rent: false
-      })
-      await book1.save()
-      await book2.save()
+jest.mock('../src/models/Book', () => ({
+  find: jest.fn()
+}))
 
-      const res = await request(server)
-        .get('/books/search')
-        .query({ author: 'Test author' })
-
-      expect(res.status).toBe(200)
-      expect(res.body.length).toBe(1)
-      expect(res.body[0].title).toBe('Test title')
-      expect(res.body[0].author).toBe('Test author')
-
-      await book1.remove()
-      await book2.remove()
-    })
+describe('search function', () => {
+  afterEach(() => {
+    jest.clearAllMocks()
   })
 
-  describe('GET /books', () => {
-    it('should return a list of all books', async () => {
-      const book1 = new Book({
-        title: 'Test title',
-        author: 'Test author',
-        is_rent: false
-      })
-      const book2 = new Book({
-        title: 'Test title 2',
-        author: 'Test author 2',
-        is_rent: false
-      })
-      await book1.save()
-      await book2.save()
+  it('should return all books when no filter is provided', async () => {
+    const mockBooks = [{ title: 'Book 1' }, { title: 'Book 2' }]
 
-      const res = await request(server)
-        .get('/books')
+    Book.find.mockResolvedValueOnce(mockBooks)
 
-      expect(res.status).toBe(200)
-      expect(res.body.length).toBe(2)
+    const req = { query: {} }
+    const res = { json: jest.fn() }
 
-      await book1.remove()
-      await book2.remove()
-    })
+    await search(req, res)
+
+    expect(Book.find).toHaveBeenCalledTimes(1)
+    expect(res.json).toHaveBeenCalledTimes(1)
+    expect(res.json).toHaveBeenCalledWith(mockBooks)
+  })
+
+  it('should return books filtered by query parameters', async () => {
+    const mockBooks = [{ title: 'Book 1' }, { title: 'Book 2' }]
+
+    Book.find.mockResolvedValueOnce(mockBooks)
+
+    const req = { query: { author: 'John Doe' } }
+    const res = { json: jest.fn() }
+
+    await search(req, res)
+
+    expect(Book.find).toHaveBeenCalledTimes(1)
+    expect(Book.find).toHaveBeenCalledWith({ author: 'John Doe' })
+    expect(res.json).toHaveBeenCalledTimes(1)
+    expect(res.json).toHaveBeenCalledWith(mockBooks)
+  })
+
+  it('should throw an error when an error occurs', async () => {
+    const mockError = new Error('Error searching for books.')
+
+    Book.find.mockRejectedValueOnce(mockError)
+
+    const req = { query: {} }
+    const res = { json: jest.fn(), status: jest.fn().mockReturnThis() }
+
+    await search(req, res)
+
+    expect(Book.find).toHaveBeenCalledTimes(1)
+    expect(res.status).toHaveBeenCalledTimes(1)
+    expect(res.status).toHaveBeenCalledWith(500)
+    expect(res.json).toHaveBeenCalledTimes(1)
+    expect(res.json).toHaveBeenCalledWith({ message: mockError.message })
   })
 })

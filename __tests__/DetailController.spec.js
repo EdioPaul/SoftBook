@@ -1,45 +1,50 @@
-const request = require('supertest')
-const server = require('../src/server')
-const mongoose = require('mongoose')
+const bookController = require('../src/controllers/DetailController')
 const Book = require('../src/models/Book')
 
-describe('Detail Controller', () => {
-  let bookId
-
-  beforeAll(async () => {
-    await mongoose.connect(process.env.MONGODB_URI, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true
-    })
-    await Book.deleteMany({})
-    const book = new Book({
+describe('bookController detail', () => {
+  it('should return the book detail', async () => {
+    const mockFindById = jest.spyOn(Book, 'findById')
+    const mockBook = {
+      id: '123',
       title: 'Test Book',
       author: 'Test Author',
-      genre: 'Test Genre',
-      description: 'Test description'
-    })
-    await book.save()
-    bookId = book._id.toString()
+      ISBN: '1234567890'
+    }
+    mockFindById.mockResolvedValue(mockBook)
+
+    const req = {
+      params: {
+        id: '123'
+      }
+    }
+    const res = {
+      json: jest.fn()
+    }
+    await bookController.detail(req, res)
+
+    expect(mockFindById).toHaveBeenCalledWith('123')
+
+    expect(res.json).toHaveBeenCalledWith(mockBook)
+
+    mockFindById.mockRestore()
   })
 
-  afterAll(async () => {
-    await Book.deleteMany({})
-    await mongoose.disconnect()
-  })
+  it('should throw an error if Book.findById fails', async () => {
+    const mockFindById = jest.spyOn(Book, 'findById')
+    mockFindById.mockRejectedValue(new Error('Error finding book'))
 
-  describe('GET /books/:id', () => {
-    test('should return a book by its id', async () => {
-      const response = await request(server).get(`/books/${bookId}`)
-      expect(response.status).toBe(200)
-      expect(response.body).toHaveProperty('title', 'Test Book')
-      expect(response.body).toHaveProperty('author', 'Test Author')
-      expect(response.body).toHaveProperty('genre', 'Test Genre')
-      expect(response.body).toHaveProperty('description', 'Test description')
-    })
+    const req = {
+      params: {
+        id: '123'
+      }
+    }
+    const res = {
+      json: jest.fn()
+    }
+    await expect(bookController.detail(req, res)).rejects.toThrow('Error finding book')
 
-    test('should return a 404 error if book is not found', async () => {
-      const response = await request(server).get(`/books/${mongoose.Types.ObjectId()}`)
-      expect(response.status).toBe(404)
-    })
+    expect(mockFindById).toHaveBeenCalledWith('123')
+
+    mockFindById.mockRestore()
   })
 })

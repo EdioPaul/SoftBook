@@ -5,8 +5,8 @@
   "author": "",
   "license": "ISC",
   "scripts": {
-    "dev": "nodemon src/server.js --ignore __tests__",
-    "test": "jest"
+    "dev": "nodemon src/server.js --ignore tests",
+    "test": "jest --detectOpenHandles --forceExit"
   },
   "dependencies": {
     "cors": "^2.8.5",

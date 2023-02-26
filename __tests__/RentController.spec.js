@@ -1,49 +1,63 @@
-const request = require('supertest')
-const server = require('../src/server')
-const Book = require('../src/models/Book')
+const Book = require('..src/models/Book')
+const bookController = require('../src/controllers/BookController')
 
-describe('Rent Controller', () => {
-  describe('PUT /books/:id/rent', () => {
-    it('should rent a book if it is available', async () => {
-      const book = new Book({
-        title: 'Test title',
-        author: 'Test author',
-        is_rent: false
-      })
-      await book.save()
+jest.mock('../src/models/Book')
 
-      const res = await request(server)
-        .put(`/books/${book.id}/rent`)
-        .send({
-          is_rent: true
-        })
+describe('rentBook()', () => {
+  test('should return "Book is already rented" if book is already rented', async () => {
+    const bookId = '123'
+    const bookData = {
+      is_rent: true
+      // other book data
+    }
+    Book.findById.mockResolvedValue(bookData)
 
-      expect(res.status).toBe(200)
-      expect(res.body.title).toBe('Test title')
-      expect(res.body.author).toBe('Test author')
-      expect(res.body.is_rent).toBe(true)
+    const req = {
+      params: {
+        id: bookId
+      }
+    }
+    const res = {
+      json: jest.fn()
+    }
 
-      await book.remove()
-    })
+    await bookController.rentBook(req, res)
 
-    it('should return an error message if the book is already rented', async () => {
-      const book = new Book({
-        title: 'Test title',
-        author: 'Test author',
-        is_rent: true
-      })
-      await book.save()
+    expect(res.json).toHaveBeenCalledWith('Book is already rented')
+  })
 
-      const res = await request(server)
-        .put(`/books/${book.id}/rent`)
-        .send({
-          is_rent: true
-        })
+  test('should update book document and return updated book if book is not rented', async () => {
+    const bookId = '123'
+    const bookData = {
+      is_rent: false
+      // other book data
+    }
+    const updatedBookData = {
+      is_rent: true
+      // other book data
+    }
+    Book.findById.mockResolvedValue(bookData)
+    Book.findByIdAndUpdate.mockResolvedValue(updatedBookData)
 
-      expect(res.status).toBe(200)
-      expect(res.body).toBe('Book is already rented')
+    const req = {
+      params: {
+        id: bookId
+      },
+      body: {
+        // new book data
+      }
+    }
+    const res = {
+      json: jest.fn()
+    }
 
-      await book.remove()
-    })
+    await bookController.rentBook(req, res)
+
+    expect(Book.findByIdAndUpdate).toHaveBeenCalledWith(
+      bookId,
+      req.body,
+      { new: true }
+    )
+    expect(res.json).toHaveBeenCalledWith(updatedBookData)
   })
 })

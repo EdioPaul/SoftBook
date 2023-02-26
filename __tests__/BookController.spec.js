@@ -1,118 +1,144 @@
-const server = require('../src/server')
-const request = require('supertest')
-const mongoose = require('mongoose')
-const Book = require('../src/models/Book')
+const BookController = require('../src/controllers/BookController');
+const Book = require('../src/models/Book');
+
+jest.mock('../models/Book');
 
 describe('BookController', () => {
-  let testBook
+  describe('create', () => {
+    it('should create a new book when it does not exist', async () => {
+      const req = {
+        body: {
+          ISBN: '1234567890',
+          title: 'Example Book',
+          author: 'Jane Doe',
+        },
+      };
 
-  beforeAll(async () => {
-    await mongoose.connect(process.env.MONGO_URI, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true
-    })
-  })
+      const res = {
+        json: jest.fn(),
+      };
 
-  afterAll(async () => {
-    await Book.deleteMany()
-    await mongoose.connection.close()
-  })
+      Book.findOne.mockReturnValue(null);
+      Book.create.mockResolvedValue(req.body);
 
-  describe('POST /book', () => {
-    it('should create a new book', async () => {
+      await BookController.create(req, res);
+
+      expect(Book.findOne).toHaveBeenCalledWith({ ISBN: req.body.ISBN });
+      expect(Book.create).toHaveBeenCalledWith(req.body);
+      expect(res.json).toHaveBeenCalledWith(req.body);
+    });
+
+    it('should return "Book exists" when the book already exists', async () => {
+      const req = {
+        body: {
+          ISBN: '1234567890',
+          title: 'Example Book',
+          author: 'Jane Doe',
+        },
+      };
+
+      const res = {
+        json: jest.fn(),
+      };
+
+      Book.findOne.mockReturnValue(req.body);
+
+      await BookController.create(req, res);
+
+      expect(Book.findOne).toHaveBeenCalledWith({ ISBN: req.body.ISBN });
+      expect(Book.create).not.toHaveBeenCalled();
+      expect(res.json).toHaveBeenCalledWith('Book exists');
+    });
+  });
+
+  describe('update', () => {
+    it('should update a book when it is not rented', async () => {
+      const req = {
+        params: {
+          id: '123',
+        },
+        body: {
+          title: 'New Title',
+        },
+      };
+
+      const res = {
+        json: jest.fn(),
+      };
+
       const book = {
-        title: 'Test Book',
-        author: 'Test Author',
-        ISBN: '1234567890'
-      }
+        _id: '123',
+        title: 'Old Title',
+        is_rent: false,
+        save: jest.fn(),
+      };
 
-      const res = await request(server)
-        .post('/book')
-        .send(book)
+      Book.findById.mockResolvedValue(book);
 
-      expect(res.statusCode).toEqual(200)
-      expect(res.body.title).toEqual(book.title)
-      expect(res.body.author).toEqual(book.author)
-      expect(res.body.ISBN).toEqual(book.ISBN)
+      await BookController.update(req, res);
 
-      testBook = res.body
-    })
+      expect(Book.findById).toHaveBeenCalledWith(req.params.id);
+      expect(book.save).toHaveBeenCalled();
+      expect(res.json).toHaveBeenCalledWith(book);
+    });
 
-    it('should return error if book already exists', async () => {
+    it('should return "Book is already rented" when the book is rented', async () => {
+      const req = {
+        params: {
+          id: '123',
+        },
+        body: {
+          title: 'New Title',
+        },
+      };
+
+      const res = {
+        json: jest.fn(),
+      };
+
       const book = {
-        title: 'Test Book',
-        author: 'Test Author',
-        ISBN: '1234567890'
-      }
+        _id: '123',
+        title: 'Old Title',
+        is_rent: true,
+      };
 
-      const res = await request(server)
-        .post('/book')
-        .send(book)
+      Book.findById.mockResolvedValue(book);
 
-      expect(res.statusCode).toEqual(200)
-      expect(res.body).toEqual('Book exists')
-    })
-  })
+      await BookController.update(req, res);
 
-  describe('PUT /book/:id', () => {
-    it('should update a book', async () => {
-      const updatedBook = {
-        title: 'Updated Test Book',
-        author: 'Updated Test Author'
-      }
+      expect(Book.findById).toHaveBeenCalledWith(req.params.id);
+      expect(res.json).toHaveBeenCalledWith('Book is already rented');
+    });
+  });
 
-      const res = await request(server)
-        .put(`/book/${testBook.id}`)
-        .send(updatedBook)
+  describe('remove', () => {
+    it('should remove a book when it is not rented', async () => {
+      const req = {
+        params: {
+          id: '123',
+        },
+      };
 
-      expect(res.statusCode).toEqual(200)
-      expect(res.body.title).toEqual(updatedBook.title)
-      expect(res.body.author).toEqual(updatedBook.author)
-    })
+      const res = {
+        send: jest.fn(),
+      };
 
-    it('should return error if book is already rented', async () => {
-      const book = await Book.findById(testBook.id)
-      book.is_rent = true
-      await book.save()
+      const book = {
+        _id: '123',
+        is_rent: false,
+      };
 
-      const updatedBook = {
-        title: 'Updated Test Book',
-        author: 'Updated Test Author'
-      }
+      Book.findById.mockResolvedValue(book);
+      Book.findByIdAndRemove.mockResolvedValue();
 
-      const res = await request(server)
-        .put(`/book/${testBook.id}`)
-        .send(updatedBook)
+      await BookController.remove(req, res);
 
-      expect(res.statusCode).toEqual(200)
-      expect(res.body).toEqual('Book is already rented')
-    })
-  })
+      expect(Book.findById).toHaveBeenCalledWith(req.params.id);
+      expect(Book.findByIdAndRemove).toHaveBeenCalledWith(req.params.id);
+      expect(res.send).toHaveBeenCalled();
+    });
 
-  describe('DELETE /book/:id', () => {
-    it('should remove a book', async () => {
-      const res = await request(server)
-        .delete(`/book/${testBook.id}`)
-
-      expect(res.statusCode).toEqual(200)
-
-      const book = await Book.findById(testBook.id)
-      expect(book).toBeNull()
-    })
-
-    it('should return error if book is already rented', async () => {
-      const book = await Book.create({
-        title: 'Test Book',
-        author: 'Test Author',
-        ISBN: '1234567890',
-        is_rent: true
-      })
-
-      const res = await request(server)
-        .delete(`/book/${book.id}`)
-
-      expect(res.statusCode).toEqual(200)
-      expect(res.body).toEqual('Book is already rented')
-    })
-  })
-})
+    it('should return "Book is already rented" when the book is rented', async () => {
+      const req = {
+        params: {
+          id: '
