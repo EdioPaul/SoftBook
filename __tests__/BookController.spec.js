@@ -3,20 +3,20 @@ const request = require('supertest')
 const mongoose = require('mongoose')
 const Book = require('../src/models/Book')
 
-describe('Books API', () => {
-  let testBook = { id: '1' }
+describe('BookController', () => {
+  let testBook
 
   beforeAll(async () => {
-    await mongoose.connect(process.env.MONGO_URL, {
+    await mongoose.connect(process.env.MONGO_URI, {
       useNewUrlParser: true,
       useUnifiedTopology: true
     })
   })
 
-  // afterAll(async () => {
-  //   await Book.deleteMany()
-  //   await mongoose.connection.close()
-  // })
+  afterAll(async () => {
+    await Book.deleteMany()
+    await mongoose.connection.close()
+  })
 
   describe('POST /book', () => {
     it('should create a new book', async () => {

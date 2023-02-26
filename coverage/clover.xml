@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1677360827237" clover="3.2.0">
-  <project timestamp="1677360827237" name="All files">
-    <metrics statements="238" coveredstatements="141" conditionals="0" coveredconditionals="0" methods="10" coveredmethods="0" elements="248" coveredelements="141" complexity="0" loc="238" ncloc="238" packages="4" files="10" classes="10"/>
+<coverage generated="1677419481535" clover="3.2.0">
+  <project timestamp="1677419481535" name="All files">
+    <metrics statements="233" coveredstatements="137" conditionals="0" coveredconditionals="0" methods="9" coveredmethods="0" elements="242" coveredelements="137" complexity="0" loc="233" ncloc="233" packages="4" files="10" classes="10"/>
     <package name="src">
-      <metrics statements="52" coveredstatements="50" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+      <metrics statements="51" coveredstatements="49" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
       <file name="routes.js" path="/home/edio/Development/SoftBook/src/routes.js">
-        <metrics statements="30" coveredstatements="28" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+        <metrics statements="29" coveredstatements="27" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
         <line num="1" count="1" type="stmt"/>
         <line num="2" count="1" type="stmt"/>
         <line num="3" count="1" type="stmt"/>
@@ -35,7 +35,6 @@
         <line num="27" count="1" type="stmt"/>
         <line num="28" count="1" type="stmt"/>
         <line num="29" count="1" type="stmt"/>
-        <line num="30" count="1" type="stmt"/>
       </file>
       <file name="server.js" path="/home/edio/Development/SoftBook/src/server.js">
         <metrics statements="22" coveredstatements="22" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
@@ -64,7 +63,7 @@
       </file>
     </package>
     <package name="src.controllers">
-      <metrics statements="124" coveredstatements="40" conditionals="0" coveredconditionals="0" methods="9" coveredmethods="0"/>
+      <metrics statements="120" coveredstatements="37" conditionals="0" coveredconditionals="0" methods="8" coveredmethods="0"/>
       <file name="BookController.js" path="/home/edio/Development/SoftBook/src/controllers/BookController.js">
         <metrics statements="46" coveredstatements="11" conditionals="0" coveredconditionals="0" methods="3" coveredmethods="0"/>
         <line num="1" count="1" type="stmt"/>
@@ -180,7 +179,7 @@
         <line num="17" count="1" type="stmt"/>
       </file>
       <file name="SearchController.js" path="/home/edio/Development/SoftBook/src/controllers/SearchController.js">
-        <metrics statements="22" coveredstatements="8" conditionals="0" coveredconditionals="0" methods="2" coveredmethods="0"/>
+        <metrics statements="18" coveredstatements="5" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="0"/>
         <line num="1" count="1" type="stmt"/>
         <line num="2" count="1" type="stmt"/>
         <line num="3" count="1" type="stmt"/>
@@ -191,18 +190,14 @@
         <line num="8" count="0" type="stmt"/>
         <line num="9" count="0" type="stmt"/>
         <line num="10" count="0" type="stmt"/>
-        <line num="11" count="1" type="stmt"/>
-        <line num="12" count="1" type="stmt"/>
-        <line num="13" count="1" type="stmt"/>
+        <line num="11" count="0" type="stmt"/>
+        <line num="12" count="0" type="stmt"/>
+        <line num="13" count="0" type="stmt"/>
         <line num="14" count="0" type="stmt"/>
         <line num="15" count="0" type="stmt"/>
         <line num="16" count="0" type="stmt"/>
         <line num="17" count="0" type="stmt"/>
-        <line num="18" count="0" type="stmt"/>
-        <line num="19" count="0" type="stmt"/>
-        <line num="20" count="0" type="stmt"/>
-        <line num="21" count="0" type="stmt"/>
-        <line num="22" count="1" type="stmt"/>
+        <line num="18" count="1" type="stmt"/>
       </file>
     </package>
     <package name="src.models">

@@ -20,7 +20,6 @@ routes.get('/detail/:id', verifyJWT, DetailController.detail)
 
 routes.put('/rent/:id', verifyJWT, RentController.rentBook)
 
-routes.get('/books', verifyJWT, SearchController.books)
 routes.get('/search', verifyJWT, SearchController.search)
 
 routes.post('/book', verifyJWT, BookController.create)
