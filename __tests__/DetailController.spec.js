@@ -8,7 +8,7 @@ describe('bookController detail', () => {
       id: '123',
       title: 'Test Book',
       author: 'Test Author',
-      ISBN: '1234567890'
+      ISBN: 'ABC123'
     }
     mockFindById.mockResolvedValue(mockBook)
 

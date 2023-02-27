@@ -13,5 +13,14 @@ module.exports = {
     } catch (err) {
       throw new Error(err.message)
     }
+  },
+
+  async devolution (req, res) {
+    try {
+      const book = await Book.findByIdAndUpdate(req.params.id, req.body, { new: true })
+      return res.json(book)
+    } catch (err) {
+      throw new Error(err.message)
+    }
   }
 }

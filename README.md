@@ -13,8 +13,9 @@ This repository contains a project for Express server applications written in ES
 ## Folder structure
 
 ```shell
-├─ src # This folder contains the main run scripts for application.
-└─ tests # Tests.
+├─ __tests__ 
+├─ coverage
+└─ src 
 ```
 ## Running Docker
 
@@ -34,4 +35,11 @@ npm run dev
 
 ```bash
 npm test
+```
+
+## Eslint
+
+```bash
+npm run lint
+npm run lint -- --fix
 ```

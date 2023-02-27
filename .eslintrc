@@ -1,4 +1,14 @@
 {
+    "overrides": [
+        {
+        "files": [
+            "**/*.spec.js"
+        ],
+        "env": {
+            "jest": true
+        }
+        }
+    ],
     "rules": {
         "no-console": 1
     },

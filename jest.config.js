@@ -1,8 +1,8 @@
 module.exports = {
-  collectCoverage: true,
-  coverageDirectory: 'coverage',
-  coverageProvider: 'v8',
   roots: ['<rootDir>'],
+  collectCoverage: true,
+  coverageProvider: 'v8',
+  coverageDirectory: 'coverage',
   testEnvironment: 'jest-environment-node',
   testMatch: ['**/__tests__/**/*.spec.js?(x)']
 }

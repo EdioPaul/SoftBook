@@ -1,5 +1,5 @@
-const express = require('express')
 const verifyJWT = require('./utils/verifyJWT')
+const express = require('express')
 
 const BookController = require('./controllers/BookController')
 const DetailController = require('./controllers/DetailController')
@@ -19,6 +19,7 @@ routes.post('/logout', LoginController.logout)
 routes.get('/detail/:id', verifyJWT, DetailController.detail)
 
 routes.put('/rent/:id', verifyJWT, RentController.rentBook)
+routes.put('/devolution/:id', verifyJWT, RentController.devolution)
 
 routes.get('/search', verifyJWT, SearchController.search)
 

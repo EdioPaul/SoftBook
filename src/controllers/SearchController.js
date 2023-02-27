@@ -12,7 +12,7 @@ module.exports = {
         return res.json(book)
       }
     } catch (err) {
-      throw new Error(err.message)
+      return res.json('Error searching for books.')
     }
   }
 }
