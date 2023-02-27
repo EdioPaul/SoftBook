@@ -14,8 +14,7 @@ This repository contains a project for Express server applications written in ES
 ## Folder structure
 
 ```shell
-├─ __tests__ 
-├─ coverage
+├─ __tests__
 └─ src 
 ```
 ## Running Docker
