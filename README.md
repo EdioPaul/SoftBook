@@ -7,8 +7,9 @@ This repository contains a project for Express server applications written in ES
   1. Verification of private routes with token
   2. Use DataBase MongoDB
   3. Use Docker-compose 
-  1. Test Coverage with Jest
-  5. Code format using [JavaScript Standard Style](https://standardjs.com/)
+  4. Test Coverage with Jest
+  5. Postman file to use 
+  6. Code format using [JavaScript Standard Style](https://standardjs.com/)
  
 ## Folder structure
 
