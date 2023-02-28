@@ -1,5 +1,5 @@
-const bookController = require('../src/controllers/DetailController')
-const Book = require('../src/models/Book')
+import bookController from '../src/controllers/DetailController'
+import Book from '../src/models/Book'
 
 describe('bookController detail', () => {
   it('should return the book detail', async () => {

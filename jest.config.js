@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   roots: ['<rootDir>'],
   collectCoverage: true,
   coverageProvider: 'v8',

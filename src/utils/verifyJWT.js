@@ -1,6 +1,6 @@
-const jwt = require('jsonwebtoken')
+import jwt from 'jsonwebtoken'
 
-const verifyJWT = (req, res, next) => {
+export const verifyJWT = (req, res, next) => {
   const { authorization } = req.headers
   const token = authorization.replace('Bearer ', '')
   if (!token) return res.status(401).json({ auth: false, message: 'No token provided.' })
@@ -12,5 +12,3 @@ const verifyJWT = (req, res, next) => {
     next()
   })
 }
-
-module.exports = verifyJWT

@@ -4,9 +4,10 @@
   "main": "src/server.js",
   "author": "",
   "license": "ISC",
+  "type": "module",
   "scripts": {
     "dev": "nodemon src/server.js --ignore tests",
-    "test": "jest --detectOpenHandles --forceExit",
+    "test": "jest",
     "lint": "eslint src/* __tests__ --ignore-path .gitignore",
     "lint:fix": "npm run lint -- --fix"
   },

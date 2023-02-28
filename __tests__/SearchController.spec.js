@@ -1,5 +1,5 @@
-const SearchController = require('../src/controllers/SearchController')
-const Book = require('../src/models/Book')
+import SearchController from '../src/controllers/SearchController'
+import Book from '../src/models/Book'
 
 jest.mock('../src/models/Book', () => ({
   find: jest.fn()

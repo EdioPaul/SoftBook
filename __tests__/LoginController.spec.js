@@ -1,6 +1,6 @@
-const UserController = require('../src/controllers/LoginController')
-const User = require('../src/models/User')
-const jwt = require('jsonwebtoken')
+import UserController from '../src/controllers/LoginController'
+import User from '../src/models/User'
+import jwt from 'jsonwebtoken'
 
 jest.mock('../src/models/User')
 jest.mock('jsonwebtoken')

@@ -1,5 +1,5 @@
-const rentController = require('../src/controllers/RentController')
-const Book = require('../src/models/Book')
+import rentController from '../src/controllers/rentController'
+import Book from '../src/models/Book'
 
 jest.mock('../src/models/Book')
 

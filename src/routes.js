@@ -1,11 +1,10 @@
-const verifyJWT = require('./utils/verifyJWT')
-const express = require('express')
-
-const BookController = require('./controllers/BookController')
-const DetailController = require('./controllers/DetailController')
-const LoginController = require('./controllers/LoginController')
-const RentController = require('./controllers/RentController')
-const SearchController = require('./controllers/SearchController')
+import { create, update, remove } from '../src/controllers/BookController.js'
+import { detail } from '../src/controllers/DetailController.js'
+import { login, logout } from '../src/controllers/LoginController.js'
+import { rent, devolution } from '../src/controllers/RentController.js'
+import { search } from '../src/controllers/SearchController.js'
+import { verifyJWT } from './utils/verifyJWT.js'
+import express from 'express'
 
 const routes = express.Router()
 
@@ -13,18 +12,18 @@ routes.get('/', function (_req, res) {
   res.send('API SoftBook')
 })
 
-routes.post('/login', LoginController.login)
-routes.post('/logout', LoginController.logout)
+routes.post('/login', login)
+routes.post('/logout', logout)
 
-routes.get('/detail/:id', verifyJWT, DetailController.detail)
+routes.get('/detail/:id', verifyJWT, detail)
 
-routes.put('/rent/:id', verifyJWT, RentController.rentBook)
-routes.put('/devolution/:id', verifyJWT, RentController.devolution)
+routes.put('/rent/:id', verifyJWT, rent)
+routes.put('/devolution/:id', verifyJWT, devolution)
 
-routes.get('/search', verifyJWT, SearchController.search)
+routes.get('/search', verifyJWT, search)
 
-routes.post('/book', verifyJWT, BookController.create)
-routes.put('/book/:id', verifyJWT, BookController.update)
-routes.delete('/book/:id', verifyJWT, BookController.remove)
+routes.post('/book', verifyJWT, create)
+routes.put('/book/:id', verifyJWT, update)
+routes.delete('/book/:id', verifyJWT, remove)
 
-module.exports = routes
+export default routes
