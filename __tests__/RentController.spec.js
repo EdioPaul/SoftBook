@@ -1,15 +1,19 @@
-import rentController from '../src/controllers/rentController'
-import Book from '../src/models/Book'
+import { rent, devolution } from '../src/controllers/RentController'
+import { Book } from '../src/models/Book'
+import { jest } from '@jest/globals'
 
 jest.mock('../src/models/Book')
 
 describe('rentBook()', () => {
   it('should return "Book is already rented" if book is already rented', async () => {
+    const mockFindById = jest.spyOn(Book, 'findById')
+
     const bookId = '123'
     const bookData = {
       is_rent: true
     }
-    Book.findById.mockResolvedValue(bookData)
+
+    mockFindById.mockResolvedValue(bookData)
 
     const req = {
       params: {
@@ -20,12 +24,15 @@ describe('rentBook()', () => {
       json: jest.fn()
     }
 
-    await rentController.rentBook(req, res)
+    await rent(req, res)
 
     expect(res.json).toHaveBeenCalledWith('Book is already rented')
   })
 
   it('should update book document and return updated book if book is not rented', async () => {
+    const mockFindById = jest.spyOn(Book, 'findById')
+    const mockFindByIdAndUpdate = jest.spyOn(Book, 'findByIdAndUpdate')
+
     const bookId = '123'
     const bookData = {
       is_rent: false
@@ -33,8 +40,8 @@ describe('rentBook()', () => {
     const updatedBookData = {
       is_rent: true
     }
-    Book.findById.mockResolvedValue(bookData)
-    Book.findByIdAndUpdate.mockResolvedValue(updatedBookData)
+    mockFindById.mockResolvedValue(bookData)
+    mockFindByIdAndUpdate.mockResolvedValue(updatedBookData)
 
     const req = {
       params: {
@@ -47,9 +54,9 @@ describe('rentBook()', () => {
       json: jest.fn()
     }
 
-    await rentController.rentBook(req, res)
+    await rent(req, res)
 
-    expect(Book.findByIdAndUpdate).toHaveBeenCalledWith(
+    expect(mockFindByIdAndUpdate).toHaveBeenCalledWith(
       bookId,
       req.body,
       { new: true }
@@ -58,6 +65,9 @@ describe('rentBook()', () => {
   })
 
   it('should update book if devolution', async () => {
+    const mockFindById = jest.spyOn(Book, 'findById')
+    const mockFindByIdAndUpdate = jest.spyOn(Book, 'findByIdAndUpdate')
+
     const bookId = '123'
     const bookData = {
       is_rent: true
@@ -65,8 +75,8 @@ describe('rentBook()', () => {
     const updatedBookData = {
       is_rent: false
     }
-    Book.findById.mockResolvedValue(bookData)
-    Book.findByIdAndUpdate.mockResolvedValue(updatedBookData)
+    mockFindById.mockResolvedValue(bookData)
+    mockFindByIdAndUpdate.mockResolvedValue(updatedBookData)
 
     const req = {
       params: {
@@ -79,9 +89,9 @@ describe('rentBook()', () => {
       json: jest.fn()
     }
 
-    await rentController.devolution(req, res)
+    await devolution(req, res)
 
-    expect(Book.findByIdAndUpdate).toHaveBeenCalledWith(
+    expect(mockFindByIdAndUpdate).toHaveBeenCalledWith(
       bookId,
       req.body,
       { new: true }

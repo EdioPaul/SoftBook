@@ -1,7 +1,7 @@
 import { create, update, remove } from '../src/controllers/BookController.js'
-import { detail } from '../src/controllers/DetailController.js'
-import { login, logout } from '../src/controllers/LoginController.js'
 import { rent, devolution } from '../src/controllers/RentController.js'
+import { login, logout } from '../src/controllers/LoginController.js'
+import { detail } from '../src/controllers/DetailController.js'
 import { search } from '../src/controllers/SearchController.js'
 import { verifyJWT } from './utils/verifyJWT.js'
 import express from 'express'
@@ -12,18 +12,18 @@ routes.get('/', function (_req, res) {
   res.send('API SoftBook')
 })
 
-routes.post('/login', login)
-routes.post('/logout', logout)
+routes.put('/devolution/:id', verifyJWT, devolution)
+routes.put('/rent/:id', verifyJWT, rent)
 
 routes.get('/detail/:id', verifyJWT, detail)
 
-routes.put('/rent/:id', verifyJWT, rent)
-routes.put('/devolution/:id', verifyJWT, devolution)
+routes.delete('/book/:id', verifyJWT, remove)
+routes.put('/book/:id', verifyJWT, update)
+routes.post('/book', verifyJWT, create)
 
 routes.get('/search', verifyJWT, search)
 
-routes.post('/book', verifyJWT, create)
-routes.put('/book/:id', verifyJWT, update)
-routes.delete('/book/:id', verifyJWT, remove)
+routes.post('/logout', logout)
+routes.post('/login', login)
 
 export default routes

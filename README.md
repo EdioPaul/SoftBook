@@ -1,15 +1,17 @@
 # SoftBook
 
-This repository contains a project for Express server applications written in ES5/ES6.
+This repository contains a project for Express server applications written in ESModules.
 
 ## Features
 
   1. Verification of private routes with token
   2. Use DataBase MongoDB
   3. Use Docker-compose 
-  4. Test Coverage with Jest
-  5. Postman file to use 
+  4. Tests with Jest
+  5. Postman file .json to use 
   6. Code format using [JavaScript Standard Style](https://standardjs.com/)
+  7. Code format using pritter
+  8. Use babel plugin for transpile es2015 commonjs in modules
  
 ## Folder structure
 

@@ -1,11 +1,15 @@
-import BookController from '../src/controllers/BookController'
-import Book from '../src/models/Book'
+import { create, update, remove } from '../src/controllers/BookController'
+import { Book } from '../src/models/Book'
+import { jest } from '@jest/globals'
 
 jest.mock('../src/models/Book')
 
 describe('BookController', () => {
   describe('create', () => {
     it('should create a new book when it does not exist', async () => {
+      const mockFindOne = jest.spyOn(Book, 'findOne')
+      const mockCreate = jest.spyOn(Book, 'create')
+
       const req = {
         body: {
           ISBN: 'ABC123',
@@ -18,17 +22,19 @@ describe('BookController', () => {
         json: jest.fn()
       }
 
-      Book.findOne.mockReturnValue(null)
-      Book.create.mockResolvedValue(req.body)
+      mockFindOne.mockReturnValue(null)
+      mockCreate.mockResolvedValue(req.body)
 
-      await BookController.create(req, res)
+      await create(req, res)
 
-      expect(Book.findOne).toHaveBeenCalledWith({ ISBN: req.body.ISBN })
-      expect(Book.create).toHaveBeenCalledWith(req.body)
+      expect(mockFindOne).toHaveBeenCalledWith({ ISBN: req.body.ISBN })
+      expect(mockCreate).toHaveBeenCalledWith(req.body)
       expect(res.json).toHaveBeenCalledWith(req.body)
     })
 
     it('should return "Book exists" when the book already exists', async () => {
+      const mockFindOne = jest.spyOn(Book, 'findOne')
+
       const req = {
         body: {
           ISBN: 'ABC123',
@@ -41,26 +47,29 @@ describe('BookController', () => {
         json: jest.fn()
       }
 
-      Book.findOne.mockReturnValue(req.body)
+      mockFindOne.mockReturnValue(req.body)
 
-      await BookController.create(req, res)
+      await create(req, res)
 
-      expect(Book.findOne).toHaveBeenCalledWith({ ISBN: req.body.ISBN })
-      expect(res.json).toHaveBeenCalledWith('Book exists')
+      expect(mockFindOne).toHaveBeenCalledWith({ ISBN: req.body.ISBN })
+      expect(res.json).toHaveBeenCalledWith(`Book ISBN ${req.body.ISBN} exists`)
     })
   })
 
   describe('update', () => {
     it('should update a book when it is not rented', async () => {
+      const mockFindById = jest.spyOn(Book, 'findById')
+      const mockFindByIdAndUpdate = jest.spyOn(Book, 'findByIdAndUpdate')
+
       const bookId = '123'
-      const book = {
-        title: 'Old title'
+      const bookData = {
+        title: 'Old Title'
       }
-      const updatedBook = {
-        title: 'New title'
+      const updatedBookData = {
+        title: 'New Title'
       }
-      Book.findById.mockResolvedValue(book)
-      Book.findByIdAndUpdate.mockResolvedValue(updatedBook)
+      mockFindById.mockResolvedValue(bookData)
+      mockFindByIdAndUpdate.mockResolvedValue(updatedBookData)
 
       const req = {
         params: {
@@ -73,18 +82,18 @@ describe('BookController', () => {
         json: jest.fn()
       }
 
-      await BookController.update(req, res)
+      await update(req, res)
 
-      expect(Book.findByIdAndUpdate).toHaveBeenCalledWith(
+      expect(mockFindByIdAndUpdate).toHaveBeenCalledWith(
         bookId,
         req.body,
         { new: true }
       )
-
-      expect(res.json).toHaveBeenCalledWith(updatedBook)
+      expect(res.json).toHaveBeenCalledWith(updatedBookData)
     })
 
     it('should return "Book is already rented" when the book is rented', async () => {
+      const mockFindById = jest.spyOn(Book, 'findById')
       const req = {
         params: {
           id: '123'
@@ -104,17 +113,19 @@ describe('BookController', () => {
         is_rent: true
       }
 
-      Book.findById.mockResolvedValue(book)
+      mockFindById.mockResolvedValue(book)
 
-      await BookController.update(req, res)
+      await update(req, res)
 
-      expect(Book.findById).toHaveBeenCalledWith(req.params.id)
+      expect(mockFindById).toHaveBeenCalledWith(req.params.id)
       expect(res.json).toHaveBeenCalledWith('Book is already rented')
     })
   })
 
   describe('remove', () => {
     it('should remove a book when it is not rented', async () => {
+      const mockFindById = jest.spyOn(Book, 'findById')
+      const mockFindByIdAndRemove = jest.spyOn(Book, 'findByIdAndRemove')
       const req = {
         params: {
           id: '123'
@@ -130,17 +141,18 @@ describe('BookController', () => {
         is_rent: false
       }
 
-      Book.findById.mockResolvedValue(book)
-      Book.findByIdAndRemove.mockResolvedValue()
+      mockFindById.mockResolvedValue(book)
+      mockFindByIdAndRemove.mockResolvedValue()
 
-      await BookController.remove(req, res)
+      await remove(req, res)
 
-      expect(Book.findById).toHaveBeenCalledWith(req.params.id)
-      expect(Book.findByIdAndRemove).toHaveBeenCalledWith(req.params.id)
+      expect(mockFindById).toHaveBeenCalledWith(req.params.id)
+      expect(mockFindByIdAndRemove).toHaveBeenCalledWith(req.params.id)
       expect(res.send).toHaveBeenCalled()
     })
 
     it('should return "Book is already rented" when the book is rented', async () => {
+      const mockFindById = jest.spyOn(Book, 'findById')
       const req = {
         params: {
           id: '123'
@@ -156,11 +168,11 @@ describe('BookController', () => {
         is_rent: true
       }
 
-      Book.findById.mockResolvedValue(book)
+      mockFindById.mockResolvedValue(book)
 
-      await BookController.remove(req, res)
+      await remove(req, res)
 
-      expect(Book.findById).toHaveBeenCalledWith(req.params.id)
+      expect(mockFindById).toHaveBeenCalledWith(req.params.id)
       expect(res.json).toHaveBeenCalledWith('Book is already rented')
     })
   })

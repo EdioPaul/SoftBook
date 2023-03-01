@@ -1,7 +1,8 @@
-import bookController from '../src/controllers/DetailController'
-import Book from '../src/models/Book'
+import { detail } from '../src/controllers/DetailController'
+import { Book } from '../src/models/Book'
+import { jest } from '@jest/globals'
 
-describe('bookController detail', () => {
+describe('BookController detail', () => {
   it('should return the book detail', async () => {
     const mockFindById = jest.spyOn(Book, 'findById')
     const mockBook = {
@@ -20,7 +21,7 @@ describe('bookController detail', () => {
     const res = {
       json: jest.fn()
     }
-    await bookController.detail(req, res)
+    await detail(req, res)
 
     expect(mockFindById).toHaveBeenCalledWith('123')
 
@@ -41,7 +42,7 @@ describe('bookController detail', () => {
     const res = {
       json: jest.fn()
     }
-    await expect(bookController.detail(req, res)).rejects.toThrow('Error finding book')
+    await expect(detail(req, res)).rejects.toThrow('Error finding book')
 
     expect(mockFindById).toHaveBeenCalledWith('123')
 
